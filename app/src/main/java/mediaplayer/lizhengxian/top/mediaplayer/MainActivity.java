@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -61,6 +60,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.stop:
                 mMediaPlayer.stop();
+                mMediaPlayer.reset();
                 break;
             default:
                 break;
