@@ -2,12 +2,14 @@ package mediaplayer.lizhengxian.top.mediaplayer;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
 
@@ -29,33 +31,43 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mPause;
     private Button mStop;
     private MediaPlayer mMediaPlayer;
+    ListView mVideoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mVideoList = new ListView(this);
+        setContentView(mVideoList);
 //        initView();
         final OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
-        new Thread(new Runnable() {
+        new AsyncTask<Void, Void, List<Video>>() {
+
             @Override
-            public void run() {
+            protected List<Video> doInBackground(Void... params) {
                 try {
                     Response response = client.newCall(request).execute();
                     String result = response.body().string();
-                    Log.i("lee..",result);
+                    Log.i("lee..", result);
                     JSONObject obj = new JSONObject(result);
-                    List<Video> list ;
-                    list = JSON.parseObject(obj.getString("视频"),List.class);
-
+                    return JSON.parseObject(obj.getString("视频"), List.class);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                return null;
             }
-        }).start();
+
+            @Override
+            protected void onPostExecute(List<Video> videos) {
+                super.onPostExecute(videos);
+                if (videos != null) {
+                    mVideoList.setAdapter(new VideoListAdapter(MainActivity.this, videos));
+                }
+            }
+        }.execute((Void) null);
 
     }
 
