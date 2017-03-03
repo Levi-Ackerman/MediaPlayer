@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
-
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -52,8 +52,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     Response response = client.newCall(request).execute();
                     String result = response.body().string();
                     Log.i("lee..", result);
-                    JSONObject obj = new JSONObject(result);
-                    return JSON.parseObject(obj.getString("视频"), List.class);
+                    JSONObject root = JSON.parseObject(result);
+                    List<JSONObject> list = JSON.parseObject(root.getString("视频"), List.class);
+                    List<Video> videoList = new ArrayList<Video>();
+                    for (JSONObject obj : list) {
+                        videoList.add(JSON.parseObject(obj.toString(), Video.class));
+                    }
+                    return videoList;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

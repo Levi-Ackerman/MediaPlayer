@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ public class VideoListAdapter extends BaseAdapter {
 
     @Override
     public Video getItem(int position) {
-        return JSON.parseObject(String.valueOf(mVideos.get(position)),Video.class);
+        return mVideos.get(position);
     }
 
     @Override
